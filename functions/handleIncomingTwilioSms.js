@@ -84,10 +84,16 @@ exports.handleIncomingTwilioSms = functions.https.onRequest(async (req, res) => 
       await chatDocRef.collection("mensajes").add(messageData);
 
       // Enviar notificación push a todos los usuarios de la empresa
-      await sendPushNotification(empresaRef, Body);
+      try {
+        await sendPushNotification(empresaRef, Body);
+      } catch (error) {
+        console.error("Error al enviar la notificación push:", error);
+        res.status(500).send("Error al enviar la notificación push");
+        return;
+      }
 
       // Responder a Twilio que todo está bien
-      res.status(200).send("<Response>Ok</Response>");
+      res.status(200).send("<Response></Response>");
     } catch (error) {
       console.error("Error al procesar el SMS:", error);
       res.status(500).send("Error al procesar el mensaje");
