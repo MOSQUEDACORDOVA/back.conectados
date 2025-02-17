@@ -2,6 +2,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const cors = require("cors")({origin: true});
+const {sendPushNotification} = require("./sendPushNotification");
 
 exports.handleIncomingTwilioSms = functions.https.onRequest(async (req, res) => {
   cors(req, res, async () => {
@@ -81,6 +82,9 @@ exports.handleIncomingTwilioSms = functions.https.onRequest(async (req, res) => 
 
       // Insertar los datos en la subcolección "mensajes" del chat correspondiente
       await chatDocRef.collection("mensajes").add(messageData);
+
+      // Enviar notificación push a todos los usuarios de la empresa
+      await sendPushNotification(empresaRef, Body);
 
       // Responder a Twilio que todo está bien
       res.status(200).send("<Response></Response>");
