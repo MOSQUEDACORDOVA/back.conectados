@@ -1,8 +1,8 @@
 const functions = require("firebase-functions");
 
 // Primera función: Hola Mundo
-exports.helloWorld = functions.https.onRequest((req, res) => {
-  res.status(200).send("¡Hola, esta es la función helloWorld!");
+exports.handleIncomingSms = functions.https.onRequest((req, res) => {
+  res.status(200).send("¡Hola, esta es la función Twilio!");
 });
 // Segunda función: Adiós Mundo
 exports.goodbyeWorld = functions.https.onRequest((req, res) => {
