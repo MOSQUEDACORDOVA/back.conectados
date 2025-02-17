@@ -87,7 +87,7 @@ exports.handleIncomingTwilioSms = functions.https.onRequest(async (req, res) => 
       await sendPushNotification(empresaRef, Body);
 
       // Responder a Twilio que todo está bien
-      res.status(200).send("<Response></Response>");
+      res.status(200).send("<Response>Ok</Response>");
     } catch (error) {
       console.error("Error al procesar el SMS:", error);
       res.status(500).send("Error al procesar el mensaje");
