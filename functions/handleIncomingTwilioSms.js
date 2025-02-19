@@ -45,6 +45,16 @@ exports.handleIncomingTwilioSms = functions.https.onRequest(async (req, res) => 
         contactoRef = contactSnapshot.docs[0].ref;
       }
 
+      // Obtener el nombre del remitente o usar el número "From" si no hay nombre disponible
+      let senderName = From;
+      if (!contactSnapshot.empty) {
+        const contactDoc = contactSnapshot.docs[0];
+        const contactData = contactDoc.data();
+        if (contactData.nombre) {
+          senderName = contactData.nombre;
+        }
+      }
+
       // Gestionar los chats
       const chatsRef = admin.firestore().collection("chats");
       const chatSnapshot = await chatsRef.where(
@@ -85,7 +95,7 @@ exports.handleIncomingTwilioSms = functions.https.onRequest(async (req, res) => 
 
       // Enviar notificación push a todos los usuarios de la empresa
       try {
-        await sendPushNotification(empresaRef, Body);
+        await sendPushNotification(empresaRef, Body, senderName);
       } catch (error) {
         console.error("Error al enviar la notificación push:", error);
         res.status(500).send("Error al enviar la notificación push");
