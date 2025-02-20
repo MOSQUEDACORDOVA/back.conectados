@@ -102,6 +102,16 @@ exports.sendOnNewMessage = functions.firestore
         const chatId = context.params.chatId;
         const mensajeId = context.params.mensajeId;
 
+        const mensajeDoc = await admin.firestore().collection(
+            `chats/${chatId}/mensajes`).doc(mensajeId).get();
+        const remitente = mensajeDoc.data().remitente;
+
+        // Sólo se enviará un mensaje si el remitente es el usuario
+        // De la aplicación y no un mensaje recibido de otra plataforma
+        if (remitente !== 1) {
+          return;
+        }
+
         const chatDoc = await admin.firestore().collection(
             "chats").doc(chatId).get();
 
@@ -109,8 +119,6 @@ exports.sendOnNewMessage = functions.firestore
         const contactoRef = chatDoc.data().contacto;
         const channelDoc = await channelRef.get();
         const contactoDoc = await contactoRef.get();
-        const mensajeDoc = await admin.firestore().collection(
-            `chats/${chatId}/mensajes`).doc(mensajeId).get();
 
         const destinatario = contactoDoc.data().identificador;
         const contenido = mensajeDoc.data().contenido;
